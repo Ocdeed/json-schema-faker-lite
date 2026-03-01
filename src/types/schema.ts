@@ -23,61 +23,55 @@ export type JSONSchemaFormat =
   | 'uri-template';
 
 /**
+ * Base schema properties
+ */
+export interface JSONSchemaBase {
+  enum?: unknown[];
+  const?: unknown;
+  default?: unknown;
+  [key: string]: unknown;
+}
+
+/**
  * String schema keywords
  */
-export interface JSONSchemaString {
+export interface JSONSchemaString extends JSONSchemaBase {
   type: 'string';
   minLength?: number;
   maxLength?: number;
   pattern?: string;
   format?: JSONSchemaFormat;
-  enum?: string[];
-  const?: string;
-  default?: string;
-  [key: string]: unknown;
 }
 
 /**
  * Number schema keywords
  */
-export interface JSONSchemaNumber {
+export interface JSONSchemaNumber extends JSONSchemaBase {
   type: 'number';
   minimum?: number;
   maximum?: number;
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   multipleOf?: number;
-  enum?: number[];
-  const?: number;
-  default?: number;
-  [key: string]: unknown;
 }
 
 /**
  * Integer schema keywords
  */
-export interface JSONSchemaInteger {
+export interface JSONSchemaInteger extends JSONSchemaBase {
   type: 'integer';
   minimum?: number;
   maximum?: number;
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   multipleOf?: number;
-  enum?: number[];
-  const?: number;
-  default?: number;
-  [key: string]: unknown;
 }
 
 /**
  * Boolean schema keywords
  */
-export interface JSONSchemaBoolean {
+export interface JSONSchemaBoolean extends JSONSchemaBase {
   type: 'boolean';
-  enum?: boolean[];
-  const?: boolean;
-  default?: boolean;
-  [key: string]: unknown;
 }
 
 /**
@@ -88,43 +82,31 @@ export type JSONSchemaProperty = JSONSchema | boolean;
 /**
  * Object schema keywords
  */
-export interface JSONSchemaObject {
+export interface JSONSchemaObject extends JSONSchemaBase {
   type: 'object';
   properties?: Record<string, JSONSchemaProperty>;
   required?: string[];
   additionalProperties?: JSONSchemaProperty | boolean;
   minProperties?: number;
   maxProperties?: number;
-  enum?: object[];
-  const?: object;
-  default?: object;
-  [key: string]: unknown;
 }
 
 /**
  * Array schema keywords
  */
-export interface JSONSchemaArray {
+export interface JSONSchemaArray extends JSONSchemaBase {
   type: 'array';
   items?: JSONSchemaProperty;
   minItems?: number;
   maxItems?: number;
   uniqueItems?: boolean;
-  enum?: unknown[][];
-  const?: unknown[];
-  default?: unknown[];
-  [key: string]: unknown;
 }
 
 /**
  * Null schema keywords
  */
-export interface JSONSchemaNull {
+export interface JSONSchemaNull extends JSONSchemaBase {
   type: 'null';
-  enum?: null[];
-  const?: null;
-  default?: null;
-  [key: string]: unknown;
 }
 
 /**
@@ -138,59 +120,53 @@ export type JSONSchema =
   | JSONSchemaObject 
   | JSONSchemaArray 
   | JSONSchemaNull
-  | (Omit<JSONSchemaString, 'type'> & { type?: never })
-  | (Omit<JSONSchemaNumber, 'type'> & { type?: never })
-  | (Omit<JSONSchemaInteger, 'type'> & { type?: never })
-  | (Omit<JSONSchemaBoolean, 'type'> & { type?: never })
-  | (Omit<JSONSchemaObject, 'type'> & { type?: never })
-  | (Omit<JSONSchemaArray, 'type'> & { type?: never })
-  | (Omit<JSONSchemaNull, 'type'> & { type?: never });
+  | JSONSchemaBase;
 
 /**
  * Type guard to check if schema is a string schema
  */
 export function isStringSchema(schema: JSONSchema): schema is JSONSchemaString {
-  return schema.type === 'string';
+  return (schema as JSONSchemaString).type === 'string';
 }
 
 /**
  * Type guard to check if schema is a number schema
  */
 export function isNumberSchema(schema: JSONSchema): schema is JSONSchemaNumber {
-  return schema.type === 'number';
+  return (schema as JSONSchemaNumber).type === 'number';
 }
 
 /**
  * Type guard to check if schema is an integer schema
  */
 export function isIntegerSchema(schema: JSONSchema): schema is JSONSchemaInteger {
-  return schema.type === 'integer';
+  return (schema as JSONSchemaInteger).type === 'integer';
 }
 
 /**
  * Type guard to check if schema is a boolean schema
  */
 export function isBooleanSchema(schema: JSONSchema): schema is JSONSchemaBoolean {
-  return schema.type === 'boolean';
+  return (schema as JSONSchemaBoolean).type === 'boolean';
 }
 
 /**
  * Type guard to check if schema is an object schema
  */
 export function isObjectSchema(schema: JSONSchema): schema is JSONSchemaObject {
-  return schema.type === 'object';
+  return (schema as JSONSchemaObject).type === 'object';
 }
 
 /**
  * Type guard to check if schema is an array schema
  */
 export function isArraySchema(schema: JSONSchema): schema is JSONSchemaArray {
-  return schema.type === 'array';
+  return (schema as JSONSchemaArray).type === 'array';
 }
 
 /**
  * Type guard to check if schema is a null schema
  */
 export function isNullSchema(schema: JSONSchema): schema is JSONSchemaNull {
-  return schema.type === 'null';
+  return (schema as JSONSchemaNull).type === 'null';
 }
